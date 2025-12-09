@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tec Diving Exam Review</title>
+    <style>
+        /* --- Professional CSS Styling (Enhanced) --- */
+        :root {
+            --primary-color: #1f3747; /* Dark Teal/Blue-Gray for Headings & Accents */
+            --secondary-color: #4a6372; /* Lighter Accent for Borders */
+            --background-color: #f5f7fa; /* Very Light Gray Background */
+            --text-color: #333;
+            --stripe-color: #f0f0f0; /* Light Gray for table stripes */
+            --hover-color: #e0f0ff; /* Light Blue on hover */
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 50px 20px;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            font-size: 2.2em;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            font-weight: 500;
+        }
+
+        /* Style for the dropdown container */
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--secondary-color);
+            font-size: 1em;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--primary-color); 
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        /* Make the header rounded at the top */
+        th:first-child { border-top-left-radius: 8px; }
+        th:last-child { border-top-right-radius: 8px; }
+
+        tr:nth-child(odd) {
+            background: white;
+        }
+        
+        tr:nth-child(even) {
+            background: var(--stripe-color);
+        }
+        
+        tr:hover {
+            background-color: var(--hover-color); 
+            transition: background-color 0.2s;
+        }
+        
+        /* Remove the bottom border from the last row's cells */
+        #qaTable tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Highlight the first column (Question) and align center for number */
+        td:first-child {
+            font-weight: bold;
+            width: 100px;
+            text-align: center;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tec 40/45/50 incl. Trimix 🤿</h1>
+
+        <div class="controls">
+            <label for="exam-selector">Select Exam:</label>
+            <select id="exam-selector"></select>
+        </div>
+
+        <table id="qaTable">
+            <thead>
+                <tr>
+                    <th>Question No.</th>
+                    <th>Correct Answer(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        // --- JavaScript for Data Handling and Table Rendering ---
+        
+        // Helper function to transform the raw JSON structure into the desired format
+        function transformData(rawData, questionKey, answerKey) {
+            // Find the index of the header row and skip it
+            const headerRowIndex = rawData.findIndex(item => item[questionKey] === "Question");
+            const dataRows = headerRowIndex !== -1 ? rawData.slice(headerRowIndex + 1) : rawData;
+
+            return dataRows.map(item => ({
+                // Ensure the question number is converted to a string for consistency
+                "Question": String(item[questionKey]),
+                // 'Column3' is the key for the answers in the provided files
+                "Answer": item[answerKey]
+            }));
+        }
+
+        // The combined and restructured JSON data
+        const EXAM_DATA = {
+            "Tec40": transformData(
+                [
+                    { "Tec40 Exam - Questions and Answers": "Question", "Column3": "Answer" },
+                    { "Tec40 Exam - Questions and Answers": 1, "Column3": "1-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 2, "Column3": "1-2-4" },
+                    { "Tec40 Exam - Questions and Answers": 3, "Column3": "1-2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 4, "Column3": "2-3-5-6-7" },
+                    { "Tec40 Exam - Questions and Answers": 5, "Column3": "4" },
+                    { "Tec40 Exam - Questions and Answers": 6, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 7, "Column3": "2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 8, "Column3": "3" },
+                    { "Tec40 Exam - Questions and Answers": 9, "Column3": "1-2-4-6" },
+                    { "Tec40 Exam - Questions and Answers": 10, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 11, "Column3": "3" },
+                    { "Tec40 Exam - Questions and Answers": 12, "Column3": "1-2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 13, "Column3": "1-2-3" },
+                    { "Tec40 Exam - Questions and Answers": 14, "Column3": "4" },
+                    { "Tec40 Exam - Questions and Answers": 15, "Column3": "1-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 16, "Column3": "2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 17, "Column3": "3" },
+                    { "Tec40 Exam - Questions and Answers": 18, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 19, "Column3": "1" },
+                    { "Tec40 Exam - Questions and Answers": 20, "Column3": "1-2-3-4-5" },
+                    { "Tec40 Exam - Questions and Answers": 21, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 22, "Column3": "1" },
+                    { "Tec40 Exam - Questions and Answers": 23, "Column3": "1" },
+                    { "Tec40 Exam - Questions and Answers": 24, "Column3": "1" },
+                    { "Tec40 Exam - Questions and Answers": 25, "Column3": "1-2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 26, "Column3": "1" },
+                    { "Tec40 Exam - Questions and Answers": 27, "Column3": "1-2-4" },
+                    { "Tec40 Exam - Questions and Answers": 28, "Column3": "3" },
+                    { "Tec40 Exam - Questions and Answers": 29, "Column3": "1-2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 30, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 31, "Column3": "4" },
+                    { "Tec40 Exam - Questions and Answers": 32, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 33, "Column3": "1-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 34, "Column3": "3" },
+                    { "Tec40 Exam - Questions and Answers": 35, "Column3": "1-2-3-4-5-6" },
+                    { "Tec40 Exam - Questions and Answers": 36, "Column3": "1-2-3-4-6" },
+                    { "Tec40 Exam - Questions and Answers": 37, "Column3": "4" },
+                    { "Tec40 Exam - Questions and Answers": 38, "Column3": "1-2-4" },
+                    { "Tec40 Exam - Questions and Answers": 39, "Column3": "4" },
+                    { "Tec40 Exam - Questions and Answers": 40, "Column3": "1-2-3" },
+                    { "Tec40 Exam - Questions and Answers": 41, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 42, "Column3": "1-4" },
+                    { "Tec40 Exam - Questions and Answers": 43, "Column3": "1-2-3" },
+                    { "Tec40 Exam - Questions and Answers": 44, "Column3": "4" },
+                    { "Tec40 Exam - Questions and Answers": 45, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 46, "Column3": "1-2-4" },
+                    { "Tec40 Exam - Questions and Answers": 47, "Column3": "1-4" },
+                    { "Tec40 Exam - Questions and Answers": 48, "Column3": "2-3" },
+                    { "Tec40 Exam - Questions and Answers": 49, "Column3": "4" },
+                    { "Tec40 Exam - Questions and Answers": 50, "Column3": "1-2-3" },
+                    { "Tec40 Exam - Questions and Answers": 51, "Column3": "3" },
+                    { "Tec40 Exam - Questions and Answers": 52, "Column3": "1-2-3" },
+                    { "Tec40 Exam - Questions and Answers": 53, "Column3": "1-2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 54, "Column3": "3" },
+                    { "Tec40 Exam - Questions and Answers": 55, "Column3": "1-2-3-4" },
+                    { "Tec40 Exam - Questions and Answers": 56, "Column3": "1" },
+                    { "Tec40 Exam - Questions and Answers": 57, "Column3": "2" },
+                    { "Tec40 Exam - Questions and Answers": 58, "Column3": "1" },
+                    { "Tec40 Exam - Questions and Answers": 59, "Column3": "2-3" },
+                    { "Tec40 Exam - Questions and Answers": 60, "Column3": "1" }
+                ],
+                "Tec40 Exam - Questions and Answers", 
+                "Column3"
+            ),
+            "Tec40 Trimix": transformData(
+                [
+                    { "Tec40 Trimix Exam - Questions and Answers": "Question", "Column3": "Answer" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 1, "Column3": "1-3-4" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 2, "Column3": "3-4" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 3, "Column3": "3" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 4, "Column3": "1" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 5, "Column3": "3" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 6, "Column3": "4" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 7, "Column3": "1-3" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 8, "Column3": "2-4" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 9, "Column3": "1" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 10, "Column3": "1-4" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 11, "Column3": "2" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 12, "Column3": "1" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 13, "Column3": "1" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 14, "Column3": "4" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 15, "Column3": "1" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 16, "Column3": "2-4" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 17, "Column3": "1" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 18, "Column3": "1" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 19, "Column3": "2-3" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 20, "Column3": "2-3" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 21, "Column3": "1-3" },
+                    { "Tec40 Trimix Exam - Questions and Answers": 22, "Column3": "2-3" }
+                ],
+                "Tec40 Trimix Exam - Questions and Answers", 
+                "Column3"
+            ),
+            "Tec45": transformData(
+                [
+                    { "Tec45 Exam - Questions and Answers": "Question", "Column3": "Answer" },
+                    { "Tec45 Exam - Questions and Answers": 1, "Column3": "1-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 2, "Column3": "2-4" },
+                    { "Tec45 Exam - Questions and Answers": 3, "Column3": "1-2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 4, "Column3": "2-3-5-6-7" },
+                    { "Tec45 Exam - Questions and Answers": 5, "Column3": "4" },
+                    { "Tec45 Exam - Questions and Answers": 6, "Column3": "1" },
+                    { "Tec45 Exam - Questions and Answers": 7, "Column3": "1-2-4-6" },
+                    { "Tec45 Exam - Questions and Answers": 8, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 9, "Column3": "3" },
+                    { "Tec45 Exam - Questions and Answers": 10, "Column3": "1-2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 11, "Column3": "1-2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 12, "Column3": "1-2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 13, "Column3": "2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 14, "Column3": "3" },
+                    { "Tec45 Exam - Questions and Answers": 15, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 16, "Column3": "1" },
+                    { "Tec45 Exam - Questions and Answers": 17, "Column3": "1-2-3-4-5" },
+                    { "Tec45 Exam - Questions and Answers": 18, "Column3": "1-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 19, "Column3": "1-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 20, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 21, "Column3": "2-3" },
+                    { "Tec45 Exam - Questions and Answers": 22, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 23, "Column3": "2-3" },
+                    { "Tec45 Exam - Questions and Answers": 24, "Column3": "3" },
+                    { "Tec45 Exam - Questions and Answers": 25, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 26, "Column3": "1-2-4" },
+                    { "Tec45 Exam - Questions and Answers": 27, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 28, "Column3": "1" },
+                    { "Tec45 Exam - Questions and Answers": 29, "Column3": "1-2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 30, "Column3": "1-4" },
+                    { "Tec45 Exam - Questions and Answers": 31, "Column3": "1" },
+                    { "Tec45 Exam - Questions and Answers": 32, "Column3": "3" },
+                    { "Tec45 Exam - Questions and Answers": 33, "Column3": "4" },
+                    { "Tec45 Exam - Questions and Answers": 34, "Column3": "4" },
+                    { "Tec45 Exam - Questions and Answers": 35, "Column3": "2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 36, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 37, "Column3": "4" },
+                    { "Tec45 Exam - Questions and Answers": 38, "Column3": "1-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 39, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 40, "Column3": "1-2-3" },
+                    { "Tec45 Exam - Questions and Answers": 41, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 42, "Column3": "4" },
+                    { "Tec45 Exam - Questions and Answers": 43, "Column3": "1-4" },
+                    { "Tec45 Exam - Questions and Answers": 44, "Column3": "1-2-4" },
+                    { "Tec45 Exam - Questions and Answers": 45, "Column3": "1-2-3-4" },
+                    { "Tec45 Exam - Questions and Answers": 46, "Column3": "1-3" },
+                    { "Tec45 Exam - Questions and Answers": 47, "Column3": "2" },
+                    { "Tec45 Exam - Questions and Answers": 48, "Column3": "2-3" },
+                    { "Tec45 Exam - Questions and Answers": 49, "Column3": "2-3" },
+                    { "Tec45 Exam - Questions and Answers": 50, "Column3": "1" }
+                ],
+                "Tec45 Exam - Questions and Answers", 
+                "Column3"
+            ),
+            "Tec45 Trimix": transformData(
+                [
+                    { "Tec45 Trimix Exam - Questions and Answers": "Question", "Column3": "Answer" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 1, "Column3": "1-3-4" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 2, "Column3": "3-4" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 3, "Column3": "3" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 4, "Column3": "1" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 5, "Column3": "3" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 6, "Column3": "4" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 7, "Column3": "1-3" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 8, "Column3": "2-4" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 9, "Column3": "1" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 10, "Column3": "1-4" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 11, "Column3": "2" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 12, "Column3": "1" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 13, "Column3": "1" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 14, "Column3": "4" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 15, "Column3": "1" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 16, "Column3": "2-4" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 17, "Column3": "1" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 18, "Column3": "1" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 19, "Column3": "2-3" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 20, "Column3": "2-3" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 21, "Column3": "1-3" },
+                    { "Tec45 Trimix Exam - Questions and Answers": 22, "Column3": "2-3" }
+                ],
+                "Tec45 Trimix Exam - Questions and Answers", 
+                "Column3"
+            ),
+            "Tec50": [
+                { "Question": "1", "Answer": "1-3-4" },
+                { "Question": "2", "Answer": "1-4" },
+                { "Question": "3", "Answer": "1-2-3-4" },
+                { "Question": "4", "Answer": "1" },
+                { "Question": "5", "Answer": "2-4-5-6" },
+                { "Question": "6", "Answer": "1-2-3-4" },
+                { "Question": "7", "Answer": "2" },
+                { "Question": "8", "Answer": "4" },
+                { "Question": "9", "Answer": "3" },
+                { "Question": "10", "Answer": "1-3" },
+                { "Question": "11", "Answer": "1" },
+                { "Question": "12", "Answer": "1-2-3-4" },
+                { "Question": "13", "Answer": "2" },
+                { "Question": "14", "Answer": "2" },
+                { "Question": "15", "Answer": "3-4" },
+                { "Question": "16", "Answer": "1-2-3-4" },
+                { "Question": "17", "Answer": "1" },
+                { "Question": "18", "Answer": "2" },
+                { "Question": "19", "Answer": "1-2-3" },
+                { "Question": "20", "Answer": "1-2-3-4" },
+                { "Question": "21", "Answer": "1-2-3-4-5" },
+                { "Question": "22", "Answer": "1-3-4" },
+                { "Question": "23", "Answer": "1-2-3" },
+                { "Question": "24", "Answer": "2-3" },
+                { "Question": "25", "Answer": "1" },
+                { "Question": "26", "Answer": "2" },
+                { "Question": "27", "Answer": "1-2-3" },
+                { "Question": "28", "Answer": "2" },
+                { "Question": "29", "Answer": "1" },
+                { "Question": "30", "Answer": "1" },
+                { "Question": "31", "Answer": "1-4" },
+                { "Question": "32", "Answer": "1" },
+                { "Question": "33", "Answer": "2-3-4" },
+                { "Question": "34", "Answer": "1-4" },
+                { "Question": "35", "Answer": "1" },
+                { "Question": "36", "Answer": "2" },
+                { "Question": "37", "Answer": "2" },
+                { "Question": "38", "Answer": "1-2-3-4" },
+                { "Question": "39", "Answer": "1-2" },
+                { "Question": "40", "Answer": "1" },
+                { "Question": "41", "Answer": "1" },
+                { "Question": "42", "Answer": "1" },
+                { "Question": "43", "Answer": "2" },
+                { "Question": "44", "Answer": "1-2-3-4" },
+                { "Question": "45", "Answer": "1" },
+                { "Question": "46", "Answer": "1-2-3-4" },
+                { "Question": "47", "Answer": "1-2-3-4" },
+                { "Question": "48", "Answer": "1-2" },
+                { "Question": "49", "Answer": "2" },
+                { "Question": "50", "Answer": "1-2-3-4" },
+                { "Question": "51", "Answer": "1" },
+                { "Question": "52", "Answer": "1-2-3-4" },
+                { "Question": "53", "Answer": "2" },
+                { "Question": "54", "Answer": "1-2-3-4" },
+                { "Question": "55", "Answer": "1" }
+            ],
+            "Tec50 Trimix": [
+                { "Question": "1", "Answer": "1-3-4" },
+                { "Question": "2", "Answer": "2-3" },
+                { "Question": "3", "Answer": "3" },
+                { "Question": "4", "Answer": "1" },
+                { "Question": "5", "Answer": "3" },
+                { "Question": "6", "Answer": "4" },
+                { "Question": "7", "Answer": "1-3" },
+                { "Question": "8", "Answer": "2-4" },
+                { "Question": "9", "Answer": "1" },
+                { "Question": "10", "Answer": "1-4" },
+                { "Question": "11", "Answer": "2" },
+                { "Question": "12", "Answer": "1" },
+                { "Question": "13", "Answer": "1" },
+                { "Question": "14", "Answer": "4" },
+                { "Question": "15", "Answer": "1-2-3" },
+                { "Question": "16", "Answer": "1" },
+                { "Question": "17", "Answer": "2-4" },
+                { "Question": "18", "Answer": "1" },
+                { "Question": "19", "Answer": "1" },
+                { "Question": "20", "Answer": "2-3" },
+                { "Question": "21", "Answer": "2-3-4" },
+                { "Question": "22", "Answer": "1-2-3" },
+                { "Question": "23", "Answer": "2" },
+                { "Question": "24", "Answer": "1-2-3" },
+                { "Question": "25", "Answer": "1" },
+                { "Question": "26", "Answer": "2-3" }
+            ]
+        };
+
+        const selector = document.getElementById("exam-selector");
+        const tbody = document.querySelector("#qaTable tbody");
+
+        /**
+         * Renders the data for a specific exam key into the table.
+         * @param {string} examKey - The key of the exam data in EXAM_DATA.
+         */
+        function renderTable(examKey) {
+            // Get the data for the selected exam
+            const dataToDisplay = EXAM_DATA[examKey];
+
+            // Clear the current table body
+            tbody.innerHTML = "";
+
+            if (!dataToDisplay) {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No data found for this exam.</td></tr>';
+                return;
+            }
+
+            // Iterate through the data and create table rows
+            dataToDisplay.forEach(item => {
+                const row = document.createElement("tr");
+                // The keys 'Question' and 'Answer' are based on the clean structure above
+                row.innerHTML = `<td>${item.Question}</td><td>${item.Answer}</td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        /**
+         * Initializes the dropdown with available exam names and sets up the change listener.
+         */
+        function initializeSelector() {
+            // Get all exam names (keys) from the EXAM_DATA object
+            const examNames = Object.keys(EXAM_DATA);
+
+            // Populate the dropdown
+            examNames.forEach(name => {
+                const option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                selector.appendChild(option);
+            });
+
+            // Add an event listener to re-render the table when a new exam is selected
+            selector.addEventListener('change', (event) => {
+                renderTable(event.target.value);
+            });
+
+            // Load the first exam by default
+            if (examNames.length > 0) {
+                renderTable(examNames[0]);
+            }
+        }
+
+        // Run the initialization function when the script loads
+        initializeSelector();
+    </script>
+</body>
+</html>
